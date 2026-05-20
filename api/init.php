@@ -55,22 +55,42 @@ try {
         )
     ");
 
+    $spotsData = [
+        109, 104, 106, 113, 110, 97, 98, 112, 115, 102,
+        101, 114, 105, 116, 108, 111, 107, 103, 99, 100
+    ];
+    sort($spotsData);
+
     // Dodanie miejsc
-    for ($i = 1; $i <= 5; $i++) {
+    foreach ($spotsData as $spotNum) {
         $stmt = $db->prepare("INSERT INTO spots (number, name) VALUES (?, ?)");
-        $stmt->execute([$i, "Miejsce " . $i]);
+        $stmt->execute([$spotNum, "Miejsce " . $spotNum]);
     }
 
-    // Dodanie użytkowników
+    // Hasło testowe: password123
     $passwordHash = password_hash('password123', PASSWORD_DEFAULT);
     
     $users = [
-        ['name' => 'Jakub Miszczak', 'email' => 'j.miszczak@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => null, 'is_admin' => 1],
-        ['name' => 'Jan Kowalski', 'email' => 'jan@bluerank.pl', 'password' => $passwordHash, 'assigned_spot' => 1, 'is_admin' => 0],
-        ['name' => 'Anna Nowak', 'email' => 'anna@bluerank.pl', 'password' => $passwordHash, 'assigned_spot' => 2, 'is_admin' => 0],
-        ['name' => 'Piotr Wiśniewski', 'email' => 'piotr@bluerank.pl', 'password' => $passwordHash, 'assigned_spot' => 3, 'is_admin' => 0],
-        ['name' => 'Kasia Wójcik', 'email' => 'kasia@bluerank.pl', 'password' => $passwordHash, 'assigned_spot' => null, 'is_admin' => 0],
-        ['name' => 'Michał Kamiński', 'email' => 'michal@bluerank.pl', 'password' => $passwordHash, 'assigned_spot' => null, 'is_admin' => 0]
+        ['name' => 'Aneta Mondry', 'email' => 'a.mondry@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 109, 'is_admin' => 0],
+        ['name' => 'Monika Marszałek', 'email' => 'm.marszalek@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 104, 'is_admin' => 0],
+        ['name' => 'Jarosław Miszczak', 'email' => 'j.miszczak@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 106, 'is_admin' => 1],
+        ['name' => 'Jacek Tkaczuk', 'email' => 'j.tkaczuk@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 113, 'is_admin' => 0],
+        ['name' => 'Tomasz Sąsiadek', 'email' => 't.sasiadek@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 110, 'is_admin' => 0],
+        ['name' => 'Aleksandra Piechocka', 'email' => 'a.piechocka@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 97, 'is_admin' => 0],
+        ['name' => 'Maciej Antczak', 'email' => 'm.antczak@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 98, 'is_admin' => 0],
+        ['name' => 'Katarzyna Szymańska', 'email' => 'k.szymanska@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 112, 'is_admin' => 0],
+        ['name' => 'Rafał Trąbski', 'email' => 'r.trabski@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 115, 'is_admin' => 0],
+        ['name' => 'Piotr Kowalczyk', 'email' => 'p.kowalczyk@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 102, 'is_admin' => 0],
+        ['name' => 'Daniel Smoliński', 'email' => 'd.smolinski@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 101, 'is_admin' => 0],
+        ['name' => 'Mateusz Blumenfeld', 'email' => 'm.blumenfeld@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 114, 'is_admin' => 0],
+        ['name' => 'Piotr Matusiak', 'email' => 'p.matusiak@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 105, 'is_admin' => 0],
+        ['name' => 'Agnieszka Węglewska', 'email' => 'a.weglewska@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 116, 'is_admin' => 0],
+        ['name' => 'Dariusz Sendecki', 'email' => 'd.sendecki@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 108, 'is_admin' => 0],
+        ['name' => 'Weronika Węglewska', 'email' => 'w.weglewska@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 111, 'is_admin' => 0],
+        ['name' => 'Justyna Burchard', 'email' => 'j.burchard@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 107, 'is_admin' => 0],
+        ['name' => 'Karolina Pakulska', 'email' => 'k.pakulska@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 103, 'is_admin' => 0],
+        ['name' => 'Magdalena Euejda', 'email' => 'm.euejda@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 99, 'is_admin' => 0],
+        ['name' => 'Bartłomiej Majas', 'email' => 'b.majas@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 100, 'is_admin' => 0]
     ];
 
     $stmt = $db->prepare("INSERT INTO users (name, email, password, assigned_spot, is_admin) VALUES (?, ?, ?, ?, ?)");
