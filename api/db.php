@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$dbFile = __DIR__ . '/database.sqlite';
+$dbFile = __DIR__ . '/.db_9xQ2LpZ7vM3n.sqlite';
 $dbExists = file_exists($dbFile);
 
 try {
