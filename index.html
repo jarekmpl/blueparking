@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blueparking - Bluerank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <!-- Ekran logowania -->
+    <div id="login-view" class="view active">
+        <div class="glass-card login-card">
+            <h1 class="logo">Blue<span>parking</span></h1>
+            <p class="subtitle">Zaloguj się do systemu rezerwacji</p>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" required placeholder="np. jan@bluerank.pl">
+                </div>
+                <div class="input-group">
+                    <label for="password">Hasło</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                <div id="login-error" class="error-message"></div>
+                <button type="submit" class="btn btn-primary">Zaloguj się</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Główny ekran -->
+    <div id="dashboard-view" class="view">
+        <header class="glass-header">
+            <div class="header-content">
+                <h1 class="logo">Blue<span>parking</span></h1>
+                <div class="user-info">
+                    <span id="user-greeting">Witaj, <strong id="user-name"></strong></span>
+                    <button id="admin-panel-btn" class="btn btn-sm btn-outline" style="display: none;">Panel Admina</button>
+                    <button id="logout-btn" class="btn btn-sm btn-outline">Wyloguj</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            <div class="dashboard-actions" style="margin-bottom: -16px;">
+                <button id="back-to-dashboard-btn" class="btn btn-sm btn-outline" style="display: none;">← Powrót do pulpitu</button>
+            </div>
+            
+            <section class="glass-card section-date-selector">
+                <h2>Wybierz datę</h2>
+                <div class="date-tabs" id="date-tabs">
+                    <!-- Daty zostaną wygenerowane przez JS -->
+                </div>
+            </section>
+
+            <section class="glass-card section-spots">
+                <div class="spots-header">
+                    <h2>Miejsca parkingowe na: <span id="current-selected-date"></span></h2>
+                    <div class="legend">
+                        <span class="legend-item"><span class="dot available"></span> Dostępne</span>
+                        <span class="legend-item"><span class="dot occupied"></span> Zajęte</span>
+                        <span class="legend-item"><span class="dot yours"></span> Twoje (zajęte)</span>
+                    </div>
+                </div>
+                <div class="spots-grid" id="spots-grid">
+                    <!-- Siatka miejsc zostanie wygenerowana przez JS -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Panel Administratora -->
+    <div id="admin-view" class="view">
+        <header class="glass-header">
+            <div class="header-content">
+                <h1 class="logo">Blue<span>parking</span> <span style="font-size: 1rem; color: #ef4444; font-weight: normal; margin-left: 10px;">Admin Panel</span></h1>
+                <div class="user-info">
+                    <button class="btn btn-sm btn-outline" onclick="showView('dashboard-view')">← Powrót</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard-content">
+            <div class="admin-tabs date-tabs">
+                <div class="date-tab active" id="tab-users" onclick="switchAdminTab('users')">
+                    <span class="day-date">Użytkownicy</span>
+                </div>
+                <div class="date-tab" id="tab-spots" onclick="switchAdminTab('spots')">
+                    <span class="day-date">Miejsca</span>
+                </div>
+            </div>
+
+            <section class="glass-card admin-section" id="admin-users-section">
+                <div class="spots-header">
+                    <h2>Zarządzanie Użytkownikami</h2>
+                    <button class="btn btn-sm btn-primary" onclick="openUserModal()">+ Nowy Użytkownik</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="admin-table" id="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Imię</th>
+                                <th>Email</th>
+                                <th>Przypisane Miejsce</th>
+                                <th>Admin</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Generowane dynamicznie -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="glass-card admin-section" id="admin-spots-section" style="display: none;">
+                <div class="spots-header">
+                    <h2>Zarządzanie Miejscami</h2>
+                    <form id="add-spot-form" style="display: flex; gap: 10px; align-items: center;">
+                        <input type="number" id="new-spot-number" required min="1" placeholder="Numer miejsca" class="form-input" style="width: 150px;">
+                        <button type="submit" class="btn btn-sm btn-primary">+ Dodaj Miejsce</button>
+                    </form>
+                </div>
+                <div class="spots-grid" id="admin-spots-grid">
+                    <!-- Generowane dynamicznie -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Użytkownika -->
+    <div id="user-modal" class="modal-overlay" style="display: none;">
+        <div class="glass-card modal-content">
+            <h2 id="modal-title">Dodaj Użytkownika</h2>
+            <form id="user-form">
+                <input type="hidden" id="edit-user-id">
+                <div class="input-group">
+                    <label>Imię i Nazwisko</label>
+                    <input type="text" id="edit-user-name" required>
+                </div>
+                <div class="input-group" id="group-email">
+                    <label>E-mail (tylko przy tworzeniu)</label>
+                    <input type="email" id="edit-user-email">
+                </div>
+                <div class="input-group" id="group-password">
+                    <label>Hasło (tylko przy tworzeniu)</label>
+                    <input type="password" id="edit-user-password">
+                </div>
+                <div class="input-group">
+                    <label>Przypisane Miejsce</label>
+                    <select id="edit-user-spot" class="form-input">
+                        <option value="">Brak (Pula ogólna)</option>
+                    </select>
+                </div>
+                <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="edit-user-admin" style="width: auto;">
+                    <label style="margin-bottom: 0;">Uprawnienia Administratora</label>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">Zapisz</button>
+                    <button type="button" class="btn btn-outline" onclick="closeUserModal()">Anuluj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast powiadomienia -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
