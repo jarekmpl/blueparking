@@ -58,6 +58,39 @@ elseif ($method === 'PUT') {
     } catch (PDOException $e) {
         jsonResponse(['error' => 'Database error'], 500);
     }
+} 
+elseif ($method === 'DELETE') {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id'] ?? null;
+
+    if (!$id) {
+        jsonResponse(['error' => 'ID is required'], 400);
+    }
+
+    if ($id == $_SESSION['user_id']) {
+        jsonResponse(['error' => 'Nie możesz usunąć własnego konta'], 400);
+    }
+
+    try {
+        $db->beginTransaction();
+        
+        // Usunięcie powiązanych rezerwacji i zwolnień, aby zapobiec problemom z kluczami obcymi
+        $stmt = $db->prepare("DELETE FROM bookings WHERE user_id = ?");
+        $stmt->execute([$id]);
+        
+        $stmt = $db->prepare("DELETE FROM releases WHERE user_id = ?");
+        $stmt->execute([$id]);
+
+        // Usunięcie użytkownika
+        $stmt = $db->prepare("DELETE FROM users WHERE id = ?");
+        $stmt->execute([$id]);
+        
+        $db->commit();
+        jsonResponse(['success' => true]);
+    } catch (PDOException $e) {
+        $db->rollBack();
+        jsonResponse(['error' => 'Database error: ' . $e->getMessage()], 500);
+    }
 }
 else {
     jsonResponse(['error' => 'Method not allowed'], 405);

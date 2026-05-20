@@ -390,6 +390,7 @@ const loadAdminUsers = async () => {
                     <td>${u.is_admin ? '<span style="color:#10b981">Tak</span>' : 'Nie'}</td>
                     <td>
                         <button class="btn btn-sm btn-outline" onclick="openUserModal(${u.id})">Edytuj</button>
+                        <button class="btn btn-sm btn-outline" style="border-color: #ef4444; color: #ef4444;" onclick="deleteUser(${u.id}, '${u.name}')">Usuń</button>
                     </td>
                 </tr>
             `;
@@ -463,6 +464,24 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
         showToast(e.message, 'error');
     }
 });
+
+// Delete user function
+window.deleteUser = async (id, name) => {
+    if (!confirm(`Czy na pewno chcesz usunąć użytkownika: ${name}?`)) {
+        return;
+    }
+    try {
+        await fetchAPI('admin/users.php', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
+        showToast('Użytkownik usunięty');
+        loadAdminUsers();
+    } catch (e) {
+        showToast(e.message, 'error');
+    }
+};
 
 document.getElementById('add-spot-form').addEventListener('submit', async (e) => {
     e.preventDefault();
