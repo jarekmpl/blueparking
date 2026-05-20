@@ -8,18 +8,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $data = json_decode(file_get_contents('php://input'), true);
 $date = $data['date'] ?? '';
+$targetUserId = $data['user_id'] ?? null;
 
 if (empty($date)) {
     jsonResponse(['error' => 'Date is required'], 400);
 }
 
 // Ensure the user actually has a spot
+if ($targetUserId) {
+    requireAdmin($db);
+    $userIdToCancel = $targetUserId;
+} else {
+    $userIdToCancel = $_SESSION['user_id'];
+}
+
 $stmt = $db->prepare("SELECT assigned_spot FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
+$stmt->execute([$userIdToCancel]);
 $user = $stmt->fetch();
 
 if (!$user || !$user['assigned_spot']) {
-    jsonResponse(['error' => 'You do not have an assigned spot to cancel release for'], 403);
+    jsonResponse(['error' => 'Ten użytkownik nie posiada przypisanego miejsca'], 403);
 }
 
 $spotNumber = $user['assigned_spot'];
@@ -32,7 +40,7 @@ if ($stmt->fetch()) {
 }
 
 $stmt = $db->prepare("DELETE FROM releases WHERE user_id = ? AND spot_number = ? AND date = ?");
-$stmt->execute([$_SESSION['user_id'], $spotNumber, $date]);
+$stmt->execute([$userIdToCancel, $spotNumber, $date]);
 
 if ($stmt->rowCount() > 0) {
     jsonResponse(['success' => true]);

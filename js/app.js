@@ -201,11 +201,14 @@ const renderSpots = (spots) => {
                 statusBadge = 'Dostępne';
                 infoHtml = `<p>Właściciel: ${spot.owner_name || 'Brak (Wspólne)'}</p>`;
                 
-                // Can only book up to 5 working days ahead
                 if (currentDayIndex <= 5) {
                     actionBtn = `<button class="btn btn-primary btn-sm" onclick="bookSpot(${spot.number})">Rezerwuj</button>`;
                 } else {
                     actionBtn = `<span style="font-size: 0.8rem; color: var(--text-muted);">Poza limitem (max 5 dni przód)</span>`;
+                }
+                
+                if (currentUser.is_admin && spot.is_released && !spot.booked_by_id) {
+                    actionBtn += ` <button class="btn btn-outline btn-sm" style="margin-left: 10px;" onclick="cancelRelease(${spot.owner_id})">Cofnij zwolnienie (Admin)</button>`;
                 }
             } else if (spot.status === 'booked') {
                 cardClass += 'spot-occupied';
@@ -215,6 +218,10 @@ const renderSpots = (spots) => {
                 cardClass += 'spot-occupied';
                 statusBadge = 'Zajęte';
                 infoHtml = `<p>Właściciel: <strong>${spot.owner_name}</strong></p>`;
+                
+                if (currentUser.is_admin) {
+                    actionBtn = `<button class="btn btn-outline btn-sm" style="border-color: #ef4444; color: #ef4444;" onclick="releaseSpot(${spot.owner_id})">Zwolnij (Admin)</button>`;
+                }
             }
         }
         
@@ -232,12 +239,16 @@ const renderSpots = (spots) => {
 };
 
 // Actions
-window.releaseSpot = async () => {
+window.releaseSpot = async (userId = null) => {
     try {
+        const payload = { date: currentDate };
+        if (userId) {
+            payload.user_id = userId;
+        }
         await fetchAPI('release_spot.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ date: currentDate })
+            body: JSON.stringify(payload)
         });
         showToast('Miejsce zwolnione');
         loadSpots(currentDate);
@@ -246,12 +257,16 @@ window.releaseSpot = async () => {
     }
 };
 
-window.cancelRelease = async () => {
+window.cancelRelease = async (userId = null) => {
     try {
+        const payload = { date: currentDate };
+        if (userId) {
+            payload.user_id = userId;
+        }
         await fetchAPI('cancel_release.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ date: currentDate })
+            body: JSON.stringify(payload)
         });
         showToast('Cofnięto zwolnienie');
         loadSpots(currentDate);
