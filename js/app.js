@@ -110,21 +110,22 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
 });
 
 // Dashboard Init
+let workingDaysList = []; // store for index checking
+
 const initDashboard = () => {
     showView('dashboard-view');
     const today = new Date();
-    // Jeśli dzisiaj jest weekend, getWorkingDays pominie go i zacznie od poniedziałku.
-    // Chcemy 3 dni robocze (dzisiaj/najbliższy roboczy + 2 kolejne)
-    const workingDays = getWorkingDays(today, 3);
+    workingDaysList = getWorkingDays(today, 20); // 20 working days
     
     const tabsContainer = document.getElementById('date-tabs');
     tabsContainer.innerHTML = '';
     
-    workingDays.forEach((dateObj, index) => {
+    workingDaysList.forEach((dateObj, index) => {
         const dateStr = formatDate(dateObj);
         const tab = document.createElement('div');
         tab.className = `date-tab ${index === 0 ? 'active' : ''}`;
         tab.dataset.date = dateStr;
+        tab.dataset.index = index;
         tab.innerHTML = `
             <span class="day-name">${formatDayName(dateObj)}</span>
             <span class="day-date">${formatDayDate(dateObj)}</span>
@@ -133,19 +134,21 @@ const initDashboard = () => {
         tab.addEventListener('click', () => {
             document.querySelectorAll('.date-tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
-            loadSpots(dateStr);
+            loadSpots(dateStr, index);
         });
         
         tabsContainer.appendChild(tab);
     });
     
     // Load first day
-    loadSpots(formatDate(workingDays[0]));
+    loadSpots(formatDate(workingDaysList[0]), 0);
 };
 
 // Load Spots
-const loadSpots = async (dateStr) => {
+let currentDayIndex = 0;
+const loadSpots = async (dateStr, dayIndex) => {
     currentDate = dateStr;
+    currentDayIndex = dayIndex;
     document.getElementById('current-selected-date').textContent = dateStr;
     const grid = document.getElementById('spots-grid');
     grid.innerHTML = '<p>Ładowanie...</p>';
@@ -175,7 +178,7 @@ const renderSpots = (spots) => {
             if (spot.is_released) {
                 cardClass += 'spot-available';
                 statusBadge = 'Zwolnione przez Ciebie';
-                infoHtml = `<p>Miejsce nr ${spot.number} powraca do puli.</p>`;
+                infoHtml = `<p><strong>${spot.spot_name}</strong> powraca do puli.</p>`;
                 if (!spot.booked_by_id) {
                     actionBtn = `<button class="btn btn-outline btn-sm" onclick="cancelRelease()">Cofnij zwolnienie</button>`;
                 } else {
@@ -184,7 +187,7 @@ const renderSpots = (spots) => {
             } else {
                 cardClass += 'spot-yours';
                 statusBadge = 'Twoje miejsce';
-                infoHtml = `<p>Masz to miejsce na wyłączność.</p>`;
+                infoHtml = `<p><strong>${spot.spot_name}</strong> - Twoje na wyłączność.</p>`;
                 actionBtn = `<button class="btn btn-primary btn-sm" onclick="releaseSpot()">Zwolnij na ten dzień</button>`;
             }
         } else if (isBookedByMe) {
@@ -198,10 +201,12 @@ const renderSpots = (spots) => {
                 statusBadge = 'Dostępne';
                 infoHtml = `<p>Właściciel: ${spot.owner_name || 'Brak (Wspólne)'}</p>`;
                 
-                // Can I book it? Only if I don't have my spot unreleased, and I don't have another booking.
-                // It's easier to just show the button and let the API reject it if invalid, 
-                // but we can also disable it in UI. Let's just let API handle validation to keep UI simple.
-                actionBtn = `<button class="btn btn-primary btn-sm" onclick="bookSpot(${spot.number})">Rezerwuj</button>`;
+                // Can only book up to 2 working days ahead (index <= 2, since index 0 is today, 1 is tmrw, 2 is day after)
+                if (currentDayIndex <= 2) {
+                    actionBtn = `<button class="btn btn-primary btn-sm" onclick="bookSpot(${spot.number})">Rezerwuj</button>`;
+                } else {
+                    actionBtn = `<span style="font-size: 0.8rem; color: var(--text-muted);">Rezerwacja niedostępna na tak odległy termin</span>`;
+                }
             } else if (spot.status === 'booked') {
                 cardClass += 'spot-occupied';
                 statusBadge = 'Zarezerwowane';
@@ -216,7 +221,7 @@ const renderSpots = (spots) => {
         grid.innerHTML += `
             <div class="${cardClass}">
                 <div class="spot-header">
-                    <div class="spot-number">${spot.number}</div>
+                    <div class="spot-number" style="font-size: 1.5rem;">${spot.spot_name}</div>
                     <div class="spot-status-badge">${statusBadge}</div>
                 </div>
                 <div class="spot-info">${infoHtml}</div>
@@ -308,23 +313,63 @@ const loadAdminSpots = async () => {
         const data = await fetchAPI('admin/spots.php');
         allAdminSpots = data.spots;
         
-        const grid = document.getElementById('admin-spots-grid');
-        grid.innerHTML = '';
+        const tbody = document.querySelector('#spots-table tbody');
+        tbody.innerHTML = '';
         allAdminSpots.forEach(s => {
-            grid.innerHTML += `<div class="spot-card spot-available" style="padding: 16px; text-align: center; font-size: 1.5rem; font-weight: bold;">Miejsce ${s.number}</div>`;
+            tbody.innerHTML += `
+                <tr>
+                    <td>${s.number}</td>
+                    <td>${s.name}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline" onclick="openSpotModal(${s.number})">Edytuj</button>
+                    </td>
+                </tr>
+            `;
         });
         
-        // Update select options in modal
+        // Update select options in user modal
         const select = document.getElementById('edit-user-spot');
         select.innerHTML = '<option value="">Brak (Pula ogólna)</option>';
         allAdminSpots.forEach(s => {
-            select.innerHTML += `<option value="${s.number}">Miejsce ${s.number}</option>`;
+            select.innerHTML += `<option value="${s.number}">${s.name}</option>`;
         });
 
     } catch (e) {
         showToast(e.message, 'error');
     }
 };
+
+window.openSpotModal = (number) => {
+    const spot = allAdminSpots.find(s => s.number == number);
+    if (!spot) return;
+    
+    document.getElementById('spot-modal').style.display = 'flex';
+    document.getElementById('edit-spot-number').value = spot.number;
+    document.getElementById('edit-spot-name').value = spot.name;
+};
+
+window.closeSpotModal = () => {
+    document.getElementById('spot-modal').style.display = 'none';
+};
+
+document.getElementById('edit-spot-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const number = document.getElementById('edit-spot-number').value;
+    const name = document.getElementById('edit-spot-name').value;
+    
+    try {
+        await fetchAPI('admin/spots.php', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ number, name })
+        });
+        showToast('Zapisano miejsce');
+        closeSpotModal();
+        loadAdminSpots();
+    } catch (e) {
+        showToast(e.message, 'error');
+    }
+});
 
 const loadAdminUsers = async () => {
     try {
@@ -335,12 +380,13 @@ const loadAdminUsers = async () => {
         const tbody = document.querySelector('#users-table tbody');
         tbody.innerHTML = '';
         allAdminUsers.forEach(u => {
+            const spotName = u.assigned_spot ? (allAdminSpots.find(s => s.number == u.assigned_spot)?.name || `Nr ${u.assigned_spot}`) : '<span style="color:var(--text-muted)">Brak</span>';
             tbody.innerHTML += `
                 <tr>
                     <td>${u.id}</td>
                     <td>${u.name}</td>
                     <td>${u.email}</td>
-                    <td>${u.assigned_spot ? `Nr ${u.assigned_spot}` : '<span style="color:var(--text-muted)">Brak</span>'}</td>
+                    <td>${spotName}</td>
                     <td>${u.is_admin ? '<span style="color:#10b981">Tak</span>' : 'Nie'}</td>
                     <td>
                         <button class="btn btn-sm btn-outline" onclick="openUserModal(${u.id})">Edytuj</button>
@@ -364,8 +410,9 @@ window.openUserModal = (id = null) => {
         document.getElementById('edit-user-email').value = user.email;
         document.getElementById('edit-user-email').disabled = true; // disable email edit
         document.getElementById('group-email').style.display = 'none';
-        document.getElementById('group-password').style.display = 'none';
+        document.getElementById('label-password').textContent = 'Nowe Hasło (zostaw puste by nie zmieniać)';
         document.getElementById('edit-user-password').required = false;
+        document.getElementById('edit-user-password').value = '';
         
         document.getElementById('edit-user-spot').value = user.assigned_spot || '';
         document.getElementById('edit-user-admin').checked = user.is_admin == 1;
@@ -374,8 +421,9 @@ window.openUserModal = (id = null) => {
         document.getElementById('user-form').reset();
         document.getElementById('edit-user-email').disabled = false;
         document.getElementById('group-email').style.display = 'block';
-        document.getElementById('group-password').style.display = 'block';
+        document.getElementById('label-password').textContent = 'Hasło';
         document.getElementById('edit-user-password').required = true;
+        document.getElementById('edit-user-password').value = '';
     }
 };
 
@@ -393,9 +441,13 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
         is_admin: document.getElementById('edit-user-admin').checked ? 1 : 0
     };
 
+    const passwordVal = document.getElementById('edit-user-password').value;
+    if (passwordVal) {
+        payload.password = passwordVal;
+    }
+
     if (!id) {
         payload.email = document.getElementById('edit-user-email').value;
-        payload.password = document.getElementById('edit-user-password').value;
     }
 
     try {
@@ -415,14 +467,15 @@ document.getElementById('user-form').addEventListener('submit', async (e) => {
 document.getElementById('add-spot-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const number = document.getElementById('new-spot-number').value;
+    const name = document.getElementById('new-spot-name').value;
     try {
         await fetchAPI('admin/spots.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ number })
+            body: JSON.stringify({ number, name })
         });
         showToast('Dodano miejsce');
-        document.getElementById('new-spot-number').value = '';
+        document.getElementById('add-spot-form').reset();
         loadAdminSpots();
     } catch (e) {
         showToast(e.message, 'error');

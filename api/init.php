@@ -4,6 +4,12 @@ require_once __DIR__ . '/db.php';
 echo "Rozpoczynam inicjalizację bazy danych...\n";
 
 try {
+    // Usunięcie starych tabel, aby zaktualizować schemat
+    $db->exec("DROP TABLE IF EXISTS bookings");
+    $db->exec("DROP TABLE IF EXISTS releases");
+    $db->exec("DROP TABLE IF EXISTS users");
+    $db->exec("DROP TABLE IF EXISTS spots");
+
     // Utworzenie tabel
     $db->exec("
         CREATE TABLE IF NOT EXISTS users (
@@ -19,7 +25,8 @@ try {
 
     $db->exec("
         CREATE TABLE IF NOT EXISTS spots (
-            number INTEGER PRIMARY KEY
+            number INTEGER PRIMARY KEY,
+            name TEXT NOT NULL
         )
     ");
 
@@ -48,16 +55,10 @@ try {
         )
     ");
 
-    // Wyczyszczenie danych (dla łatwego restartu)
-    $db->exec("DELETE FROM bookings");
-    $db->exec("DELETE FROM releases");
-    $db->exec("DELETE FROM users");
-    $db->exec("DELETE FROM spots");
-
     // Dodanie miejsc
     for ($i = 1; $i <= 5; $i++) {
-        $stmt = $db->prepare("INSERT INTO spots (number) VALUES (?)");
-        $stmt->execute([$i]);
+        $stmt = $db->prepare("INSERT INTO spots (number, name) VALUES (?, ?)");
+        $stmt->execute([$i, "Miejsce " . $i]);
     }
 
     // Dodanie użytkowników

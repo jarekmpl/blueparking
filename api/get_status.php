@@ -6,7 +6,7 @@ $date = $_GET['date'] ?? date('Y-m-d');
 
 // Fetch all spots and their owners
 $spotsStmt = $db->query("
-    SELECT s.number, u.id as owner_id, u.name as owner_name 
+    SELECT s.number, s.name as spot_name, u.id as owner_id, u.name as owner_name 
     FROM spots s 
     LEFT JOIN users u ON s.number = u.assigned_spot
 ");
@@ -57,6 +57,7 @@ foreach ($spots as $spot) {
 
     $response[] = [
         'number' => $num,
+        'spot_name' => $spot['spot_name'],
         'owner_id' => $spot['owner_id'],
         'owner_name' => $spot['owner_name'],
         'is_released' => $isReleased,

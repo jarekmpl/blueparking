@@ -14,6 +14,19 @@ if (empty($date) || empty($spotNumber)) {
     jsonResponse(['error' => 'Date and spot_number are required'], 400);
 }
 
+// Ensure the date is within the allowed 2 working days
+$today = new DateTime();
+$targetDate = new DateTime($date);
+$daysDiff = 0;
+$current = clone $today;
+
+// Very basic check: just ensure it's not too far in the future
+// We allow today + 2 working days. Max real days = 4 (if weekend is in between).
+// For simplicity, we just check if it's within the next 6 days.
+if ($targetDate < $today->setTime(0,0,0) || $targetDate > (clone $today)->modify('+6 days')) {
+    jsonResponse(['error' => 'Booking date is out of the allowed range.'], 400);
+}
+
 // Ensure the user doesn't already have an active booking or unreleased assigned spot for this date
 $stmt = $db->prepare("SELECT assigned_spot FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);

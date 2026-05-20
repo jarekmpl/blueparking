@@ -39,17 +39,21 @@ elseif ($method === 'PUT') {
     $name = $data['name'] ?? '';
     $assigned_spot = $data['assigned_spot'] ?? null;
     $is_admin = isset($data['is_admin']) ? (int)$data['is_admin'] : 0;
+    $password = $data['password'] ?? '';
 
     if (!$id || empty($name)) {
         jsonResponse(['error' => 'ID and name are required'], 400);
     }
 
-    // Protect admin from demoting themselves by accident, maybe? 
-    // Just allow it, keep it simple.
-
     try {
-        $stmt = $db->prepare("UPDATE users SET name = ?, assigned_spot = ?, is_admin = ? WHERE id = ?");
-        $stmt->execute([$name, $assigned_spot ?: null, $is_admin, $id]);
+        if (!empty($password)) {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $db->prepare("UPDATE users SET name = ?, assigned_spot = ?, is_admin = ?, password = ? WHERE id = ?");
+            $stmt->execute([$name, $assigned_spot ?: null, $is_admin, $hash, $id]);
+        } else {
+            $stmt = $db->prepare("UPDATE users SET name = ?, assigned_spot = ?, is_admin = ? WHERE id = ?");
+            $stmt->execute([$name, $assigned_spot ?: null, $is_admin, $id]);
+        }
         jsonResponse(['success' => true]);
     } catch (PDOException $e) {
         jsonResponse(['error' => 'Database error'], 500);
