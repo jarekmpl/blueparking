@@ -37,7 +37,7 @@ Aby uruchomić aplikację na docelowym serwerze z obsługą PHP:
 
 ## Bezpieczeństwo
 
-* **Ochrona bazy:** Plik bazy SQLite (`api/database.sqlite`) jest chroniony przed bezpośrednim pobraniem z poziomu przeglądarki dzięki plikowi `api/.htaccess`.
+* **Ochrona bazy:** Plik bazy SQLite posiada losowo wygenerowaną, niemożliwą do odgadnięcia nazwę rozpoczynającą się od kropki (tzw. plik ukryty, np. `.db_XYZ...sqlite`). Dzięki temu, nawet w przypadku serwerów ignorujących pliki `.htaccess` (jak np. Nginx), pobranie bazy z zewnątrz jest fizycznie niemożliwe bez znajomości jej dokładnego adresu.
 * **Hashowanie Haseł:** Wszystkie hasła w bazie danych są solone i hashowane przy użyciu bezpiecznego algorytmu `bcrypt` (poprzez funkcję PHP `password_hash`).
 * **Endpointy Administratora:** Operacje w plikach katalogu `api/admin/` są sprawdzane dedykowaną funkcją `requireAdmin()`, która weryfikuje status konta w sesji serwera.
 
