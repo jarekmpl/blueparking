@@ -1,4 +1,11 @@
 <FilesMatch "\.(sqlite|db)$">
-    Order allow,deny
-    Deny from all
+    # Dla Apache 2.4 i nowszych
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    # Dla starszych wersji Apache
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </FilesMatch>
