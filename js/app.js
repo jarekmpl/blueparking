@@ -123,7 +123,7 @@ const initDashboard = () => {
     workingDaysList.forEach((dateObj, index) => {
         const dateStr = formatDate(dateObj);
         const tab = document.createElement('div');
-        tab.className = `date-tab ${index === 0 ? 'active' : ''}`;
+        tab.className = `date-tab ${index === 0 ? 'active' : ''} ${index > 5 ? 'restricted-tab' : ''}`;
         tab.dataset.date = dateStr;
         tab.dataset.index = index;
         tab.innerHTML = `
@@ -201,11 +201,11 @@ const renderSpots = (spots) => {
                 statusBadge = 'Dostępne';
                 infoHtml = `<p>Właściciel: ${spot.owner_name || 'Brak (Wspólne)'}</p>`;
                 
-                // Can only book up to 2 working days ahead (index <= 2, since index 0 is today, 1 is tmrw, 2 is day after)
-                if (currentDayIndex <= 2) {
+                // Can only book up to 5 working days ahead
+                if (currentDayIndex <= 5) {
                     actionBtn = `<button class="btn btn-primary btn-sm" onclick="bookSpot(${spot.number})">Rezerwuj</button>`;
                 } else {
-                    actionBtn = `<span style="font-size: 0.8rem; color: var(--text-muted);">Rezerwacja niedostępna na tak odległy termin</span>`;
+                    actionBtn = `<span style="font-size: 0.8rem; color: var(--text-muted);">Poza limitem (max 5 dni przód)</span>`;
                 }
             } else if (spot.status === 'booked') {
                 cardClass += 'spot-occupied';

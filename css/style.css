@@ -263,35 +263,44 @@ h2 {
 /* Date tabs */
 .date-tabs {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     overflow-x: auto;
     padding-bottom: 8px;
+}
+
+.date-tabs::-webkit-scrollbar {
+    height: 6px;
+}
+
+.date-tabs::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
 }
 
 .date-tab {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 16px 24px;
+    border-radius: 12px;
+    padding: 10px 16px;
     cursor: pointer;
     transition: var(--transition);
-    min-width: 120px;
+    min-width: 90px;
     text-align: center;
     flex-shrink: 0;
 }
 
 .date-tab .day-name {
     display: block;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .date-tab .day-date {
     display: block;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
 }
 
@@ -304,6 +313,11 @@ h2 {
     background: var(--primary);
     border-color: var(--primary);
     color: white;
+}
+
+.date-tab.restricted-tab {
+    opacity: 0.35;
+    filter: grayscale(100%);
 }
 
 .date-tab.active .day-name {
@@ -352,8 +366,8 @@ h2 {
 .spot-card {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--card-border);
-    border-radius: 20px;
-    padding: 24px;
+    border-radius: 16px;
+    padding: 16px;
     transition: var(--transition);
     display: flex;
     flex-direction: column;
@@ -372,7 +386,7 @@ h2 {
 }
 
 .spot-number {
-    font-size: 2.5rem;
+    font-size: 1.6rem;
     font-weight: 800;
     line-height: 1;
 }

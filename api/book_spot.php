@@ -21,9 +21,10 @@ $daysDiff = 0;
 $current = clone $today;
 
 // Very basic check: just ensure it's not too far in the future
-// We allow today + 2 working days. Max real days = 4 (if weekend is in between).
-// For simplicity, we just check if it's within the next 6 days.
-if ($targetDate < $today->setTime(0,0,0) || $targetDate > (clone $today)->modify('+6 days')) {
+// We allow today + 5 working days. Max real days = 7 (if weekend is in between) or maybe 9 if holidays.
+// For simplicity on the backend, we check if it's within the next 14 days. 
+// Precise validation is done on the frontend (index <= 5).
+if ($targetDate < $today->setTime(0,0,0) || $targetDate > (clone $today)->modify('+14 days')) {
     jsonResponse(['error' => 'Booking date is out of the allowed range.'], 400);
 }
 
