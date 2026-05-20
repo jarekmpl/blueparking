@@ -17,6 +17,13 @@ try {
             attempted_at INTEGER NOT NULL
         )
     ");
+    
+    // Automatyczne dodanie kolumny harmonogramu do istniejącej tabeli
+    try {
+        $db->exec("ALTER TABLE users ADD COLUMN schedule_days TEXT DEFAULT '1,2,3,4,5'");
+    } catch (PDOException $e) {
+        // Ignoruj błąd jeśli kolumna już istnieje (kod 'HY000' lub message zawierający 'duplicate column')
+    }
 } catch (PDOException $e) {
     echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);
     exit;

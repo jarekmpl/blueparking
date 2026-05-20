@@ -6,7 +6,7 @@ $date = $_GET['date'] ?? date('Y-m-d');
 
 // Fetch all spots and their owners
 $spotsStmt = $db->query("
-    SELECT s.number, s.name as spot_name, u.id as owner_id, u.name as owner_name 
+    SELECT s.number, s.name as spot_name, u.id as owner_id, u.name as owner_name, u.schedule_days 
     FROM spots s 
     LEFT JOIN users u ON s.number = u.assigned_spot
 ");
@@ -44,10 +44,16 @@ foreach ($spots as $spot) {
     
     $status = 'occupied'; // Default: if it's assigned and not released
     
+    // Oblicz dzień tygodnia (1 = Pon, 7 = Niedz)
+    $dayOfWeek = (new DateTime($date))->format('N');
+    $scheduleDays = $spot['schedule_days'] ? explode(',', $spot['schedule_days']) : ['1','2','3','4','5'];
+    
+    $isImplicitlyReleased = $spot['owner_id'] && !in_array($dayOfWeek, $scheduleDays);
+    
     if (!$spot['owner_id']) {
         // No owner, it's a shared spot
         $status = 'available';
-    } elseif ($isReleased) {
+    } elseif ($isReleased || $isImplicitlyReleased) {
         $status = 'available';
     }
     
@@ -61,6 +67,7 @@ foreach ($spots as $spot) {
         'owner_id' => $spot['owner_id'],
         'owner_name' => $spot['owner_name'],
         'is_released' => $isReleased,
+        'is_implicitly_released' => $isImplicitlyReleased,
         'status' => $status,
         'booked_by_id' => $bookingInfo['booked_by_id'] ?? null,
         'booked_by_name' => $bookingInfo['booked_by_name'] ?? null

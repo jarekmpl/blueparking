@@ -29,15 +29,21 @@ if ($targetDate < $today->setTime(0,0,0) || $targetDate > (clone $today)->modify
 }
 
 // Ensure the user doesn't already have an active booking or unreleased assigned spot for this date
-$stmt = $db->prepare("SELECT assigned_spot FROM users WHERE id = ?");
+$stmt = $db->prepare("SELECT assigned_spot, schedule_days FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 
 if ($user && $user['assigned_spot']) {
+    $dayOfWeek = (new DateTime($date))->format('N');
+    $scheduleDays = $user['schedule_days'] ? explode(',', $user['schedule_days']) : ['1','2','3','4','5'];
+    $isImplicitlyReleased = !in_array($dayOfWeek, $scheduleDays);
+
     // Check if they released their assigned spot for this date
     $stmt = $db->prepare("SELECT id FROM releases WHERE user_id = ? AND date = ?");
     $stmt->execute([$_SESSION['user_id'], $date]);
-    if (!$stmt->fetch()) {
+    $isExplicitlyReleased = $stmt->fetch();
+
+    if (!$isExplicitlyReleased && !$isImplicitlyReleased) {
         jsonResponse(['error' => 'You already have your assigned spot for this date (not released).'], 400);
     }
 }
@@ -65,15 +71,21 @@ if ($stmt->fetch()) {
 }
 
 // 3. Check if spot is owned by someone
-$stmt = $db->prepare("SELECT id FROM users WHERE assigned_spot = ?");
+$stmt = $db->prepare("SELECT id, schedule_days FROM users WHERE assigned_spot = ?");
 $stmt->execute([$spotNumber]);
 $owner = $stmt->fetch();
 
 if ($owner) {
-    // 4. If owned, it MUST be released for this date
+    // 4. If owned, it MUST be released for this date (explicitly or implicitly)
+    $dayOfWeek = (new DateTime($date))->format('N');
+    $scheduleDays = $owner['schedule_days'] ? explode(',', $owner['schedule_days']) : ['1','2','3','4','5'];
+    $isImplicitlyReleased = !in_array($dayOfWeek, $scheduleDays);
+
     $stmt = $db->prepare("SELECT id FROM releases WHERE spot_number = ? AND date = ?");
     $stmt->execute([$spotNumber, $date]);
-    if (!$stmt->fetch()) {
+    $isExplicitlyReleased = $stmt->fetch();
+
+    if (!$isExplicitlyReleased && !$isImplicitlyReleased) {
          jsonResponse(['error' => 'Spot is not available for booking.'], 400);
     }
 }

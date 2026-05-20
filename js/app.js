@@ -69,6 +69,12 @@ const checkAuth = async () => {
             } else {
                 document.getElementById('admin-panel-btn').style.display = 'none';
             }
+            if (currentUser.assigned_spot) {
+                document.getElementById('schedule-btn').style.display = 'block';
+                window.currentUserSchedule = currentUser.schedule_days ? currentUser.schedule_days.split(',') : ['1','2','3','4','5'];
+            } else {
+                document.getElementById('schedule-btn').style.display = 'none';
+            }
             initDashboard();
         } else {
             showView('login-view');
@@ -175,12 +181,21 @@ const renderSpots = (spots) => {
         let actionBtn = '';
         
         if (isMyAssignedSpot) {
-            if (spot.is_released) {
+            if (spot.booked_by_id === currentUser.id) {
+                cardClass += 'spot-yours';
+                statusBadge = 'Twoje miejsce (Wyjątek)';
+                infoHtml = `<p><strong>${spot.spot_name}</strong> - Odwołałeś zwolnienie.</p>`;
+                actionBtn = `<button class="btn btn-outline btn-sm" onclick="cancelBooking()">Przywróć zwolnienie (harmonogram)</button>`;
+            } else if (spot.is_released || spot.is_implicitly_released) {
                 cardClass += 'spot-available';
-                statusBadge = 'Zwolnione przez Ciebie';
+                statusBadge = spot.is_implicitly_released ? 'Zwolnione (Harmonogram)' : 'Zwolnione przez Ciebie';
                 infoHtml = `<p><strong>${spot.spot_name}</strong> powraca do puli.</p>`;
                 if (!spot.booked_by_id) {
-                    actionBtn = `<button class="btn btn-outline btn-sm" onclick="cancelRelease()">Cofnij zwolnienie</button>`;
+                    if (spot.is_implicitly_released) {
+                        actionBtn = `<button class="btn btn-outline btn-sm" onclick="bookSpot(${spot.number})">Odwołaj zwolnienie z harmonogramu</button>`;
+                    } else {
+                        actionBtn = `<button class="btn btn-outline btn-sm" onclick="cancelRelease()">Cofnij zwolnienie</button>`;
+                    }
                 } else {
                     infoHtml += `<p>Zarezerwowane przez: <strong>${spot.booked_by_name}</strong></p>`;
                 }
@@ -564,6 +579,42 @@ if (cpForm) {
             closePasswordModal();
         } catch (err) {
             errorDiv.textContent = err.message || 'Błąd przy zmianie hasła.';
+        }
+    });
+}
+
+// Schedule Modal Functions
+window.openScheduleModal = () => {
+    if (window.currentUserSchedule) {
+        document.querySelectorAll('input[name="schedule_day"]').forEach(cb => {
+            cb.checked = window.currentUserSchedule.includes(cb.value);
+        });
+    }
+    const modal = document.getElementById('schedule-modal');
+    if (modal) modal.style.display = 'flex';
+};
+
+window.closeScheduleModal = () => {
+    const modal = document.getElementById('schedule-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+const schedForm = document.getElementById('schedule-form');
+if (schedForm) {
+    schedForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const checked = Array.from(document.querySelectorAll('input[name="schedule_day"]:checked')).map(cb => cb.value);
+        try {
+            await fetchAPI('update_schedule.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ schedule_days: checked })
+            });
+            showToast('Harmonogram zapisany', 'success');
+            closeScheduleModal();
+            checkAuth(); // To refresh user data and spots
+        } catch (err) {
+            showToast(err.message, 'error');
         }
     });
 }

@@ -46,6 +46,7 @@
                 <div class="user-info">
                     <span id="user-greeting">Witaj, <strong id="user-name"></strong></span>
                     <button id="admin-panel-btn" class="btn btn-sm btn-outline" style="display: none;">Panel Admina</button>
+                    <button id="schedule-btn" class="btn btn-sm btn-outline" style="display: none;" onclick="openScheduleModal()">Mój harmonogram</button>
                     <button class="btn btn-sm btn-outline" onclick="openPasswordModal()">Zmień hasło</button>
                     <button id="logout-btn" class="btn btn-sm btn-outline">Wyloguj</button>
                 </div>
@@ -244,9 +245,32 @@
         </div>
     </div>
 
+    <!-- Modal Harmonogramu -->
+    <div id="schedule-modal" class="modal-overlay" style="display: none;">
+        <div class="glass-card modal-content">
+            <h2>Mój Harmonogram</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+                Zaznacz dni, w które zazwyczaj parkujesz. W dni odznaczone Twoje miejsce zostanie domyślnie zwolnione do puli (będziesz mógł to zawsze wyjątkowo "Cofnąć" poprzez kalendarz).
+            </p>
+            <form id="schedule-form">
+                <div class="checkbox-group" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                    <label><input type="checkbox" name="schedule_day" value="1"> Poniedziałek</label>
+                    <label><input type="checkbox" name="schedule_day" value="2"> Wtorek</label>
+                    <label><input type="checkbox" name="schedule_day" value="3"> Środa</label>
+                    <label><input type="checkbox" name="schedule_day" value="4"> Czwartek</label>
+                    <label><input type="checkbox" name="schedule_day" value="5"> Piątek</label>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary">Zapisz</button>
+                    <button type="button" class="btn btn-outline" onclick="closeScheduleModal()">Anuluj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Toast powiadomienia -->
     <div id="toast" class="toast"></div>
 
-    <script src="js/app.js?v=7"></script>
+    <script src="js/app.js?v=8"></script>
 </body>
 </html>
