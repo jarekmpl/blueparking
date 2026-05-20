@@ -482,5 +482,57 @@ document.getElementById('add-spot-form').addEventListener('submit', async (e) =>
     }
 });
 
+// Password Modal Functions
+window.openPasswordModal = () => {
+    const form = document.getElementById('change-password-form');
+    if (form) form.reset();
+    
+    const errorDiv = document.getElementById('cp-error');
+    if (errorDiv) errorDiv.textContent = '';
+    
+    const modal = document.getElementById('password-modal');
+    if (modal) modal.style.display = 'flex';
+};
+
+window.closePasswordModal = () => {
+    const modal = document.getElementById('password-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+const cpForm = document.getElementById('change-password-form');
+if (cpForm) {
+    cpForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const current = document.getElementById('cp-current').value;
+        const newPass = document.getElementById('cp-new').value;
+        const confirmPass = document.getElementById('cp-new-confirm').value;
+        const errorDiv = document.getElementById('cp-error');
+        
+        errorDiv.textContent = '';
+        
+        if (newPass !== confirmPass) {
+            errorDiv.textContent = 'Nowe hasła nie są identyczne.';
+            return;
+        }
+        if (newPass.length < 6) {
+            errorDiv.textContent = 'Nowe hasło musi mieć min. 6 znaków.';
+            return;
+        }
+        
+        try {
+            const res = await fetchAPI('change_password.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ current_password: current, new_password: newPass })
+            });
+            
+            showToast(res.message || 'Hasło zostało zmienione.', 'success');
+            closePasswordModal();
+        } catch (err) {
+            errorDiv.textContent = err.message || 'Błąd przy zmianie hasła.';
+        }
+    });
+}
+
 // Boot
 checkAuth();
