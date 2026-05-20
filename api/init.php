@@ -67,39 +67,36 @@ try {
         $stmt->execute([$spotNum, "Miejsce " . $spotNum]);
     }
 
-    // Hasło testowe: password123
-    $passwordHash = password_hash('password123', PASSWORD_DEFAULT);
-    
     $users = [
-        ['name' => 'Aneta Mondry', 'email' => 'a.mondry@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 109, 'is_admin' => 0],
-        ['name' => 'Monika Marszałek', 'email' => 'm.marszalek@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 104, 'is_admin' => 0],
-        ['name' => 'Jarosław Miszczak', 'email' => 'j.miszczak@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 106, 'is_admin' => 1],
-        ['name' => 'Jacek Tkaczuk', 'email' => 'j.tkaczuk@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 113, 'is_admin' => 0],
-        ['name' => 'Tomasz Sąsiadek', 'email' => 't.sasiadek@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 110, 'is_admin' => 0],
-        ['name' => 'Aleksandra Piechocka', 'email' => 'a.piechocka@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 97, 'is_admin' => 0],
-        ['name' => 'Maciej Antczak', 'email' => 'm.antczak@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 98, 'is_admin' => 0],
-        ['name' => 'Katarzyna Szymańska', 'email' => 'k.szymanska@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 112, 'is_admin' => 0],
-        ['name' => 'Rafał Trąbski', 'email' => 'r.trabski@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 115, 'is_admin' => 0],
-        ['name' => 'Piotr Kowalczyk', 'email' => 'p.kowalczyk@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 102, 'is_admin' => 0],
-        ['name' => 'Daniel Smoliński', 'email' => 'd.smolinski@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 101, 'is_admin' => 0],
-        ['name' => 'Mateusz Blumenfeld', 'email' => 'm.blumenfeld@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 114, 'is_admin' => 0],
-        ['name' => 'Piotr Matusiak', 'email' => 'p.matusiak@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 105, 'is_admin' => 0],
-        ['name' => 'Agnieszka Węglewska', 'email' => 'a.weglewska@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 116, 'is_admin' => 0],
-        ['name' => 'Dariusz Sendecki', 'email' => 'd.sendecki@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 108, 'is_admin' => 0],
-        ['name' => 'Weronika Węglewska', 'email' => 'w.weglewska@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 111, 'is_admin' => 0],
-        ['name' => 'Justyna Burchard', 'email' => 'j.burchard@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 107, 'is_admin' => 0],
-        ['name' => 'Karolina Pakulska', 'email' => 'k.pakulska@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 103, 'is_admin' => 0],
-        ['name' => 'Magdalena Euejda', 'email' => 'm.euejda@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 99, 'is_admin' => 0],
-        ['name' => 'Bartłomiej Majas', 'email' => 'b.majas@bluerank.com', 'password' => $passwordHash, 'assigned_spot' => 100, 'is_admin' => 0]
+        ['name' => 'Aneta Mondry', 'email' => 'a.mondry@bluerank.com', 'raw_pass' => 'gT8v4Kw', 'assigned_spot' => 109, 'is_admin' => 0],
+        ['name' => 'Monika Marszałek', 'email' => 'm.marszalek@bluerank.com', 'raw_pass' => '3nPq2Lz', 'assigned_spot' => 104, 'is_admin' => 0],
+        ['name' => 'Jarosław Miszczak', 'email' => 'j.miszczak@bluerank.com', 'raw_pass' => 'x9Jc5Rb', 'assigned_spot' => 106, 'is_admin' => 1],
+        ['name' => 'Jacek Tkaczuk', 'email' => 'j.tkaczuk@bluerank.com', 'raw_pass' => '7mFa4Vw', 'assigned_spot' => 113, 'is_admin' => 0],
+        ['name' => 'Tomasz Sąsiadek', 'email' => 't.sasiadek@bluerank.com', 'raw_pass' => 'k2Hz9Pc', 'assigned_spot' => 110, 'is_admin' => 0],
+        ['name' => 'Aleksandra Piechocka', 'email' => 'a.piechocka@bluerank.com', 'raw_pass' => '5bYv8Nd', 'assigned_spot' => 97, 'is_admin' => 0],
+        ['name' => 'Maciej Antczak', 'email' => 'm.antczak@bluerank.com', 'raw_pass' => 't4Wq6Lm', 'assigned_spot' => 98, 'is_admin' => 0],
+        ['name' => 'Katarzyna Szymańska', 'email' => 'k.szymanska@bluerank.com', 'raw_pass' => '2pRx7Js', 'assigned_spot' => 112, 'is_admin' => 0],
+        ['name' => 'Rafał Trąbski', 'email' => 'r.trabski@bluerank.com', 'raw_pass' => 'v8Nd3Bw', 'assigned_spot' => 115, 'is_admin' => 0],
+        ['name' => 'Piotr Kowalczyk', 'email' => 'p.kowalczyk@bluerank.com', 'raw_pass' => '9cKf5Lp', 'assigned_spot' => 102, 'is_admin' => 0],
+        ['name' => 'Daniel Smoliński', 'email' => 'd.smolinski@bluerank.com', 'raw_pass' => 'm2Zb8Px', 'assigned_spot' => 101, 'is_admin' => 0],
+        ['name' => 'Mateusz Blumenfeld', 'email' => 'm.blumenfeld@bluerank.com', 'raw_pass' => '6qVw4Jn', 'assigned_spot' => 114, 'is_admin' => 0],
+        ['name' => 'Piotr Matusiak', 'email' => 'p.matusiak@bluerank.com', 'raw_pass' => 'h5Tc9Mk', 'assigned_spot' => 105, 'is_admin' => 0],
+        ['name' => 'Agnieszka Węglewska', 'email' => 'a.weglewska@bluerank.com', 'raw_pass' => '4bLp2Yz', 'assigned_spot' => 116, 'is_admin' => 0],
+        ['name' => 'Dariusz Sendecki', 'email' => 'd.sendecki@bluerank.com', 'raw_pass' => '8nXm6Vc', 'assigned_spot' => 108, 'is_admin' => 0],
+        ['name' => 'Weronika Węglewska', 'email' => 'w.weglewska@bluerank.com', 'raw_pass' => 'z3Jw7Fd', 'assigned_spot' => 111, 'is_admin' => 0],
+        ['name' => 'Justyna Burchard', 'email' => 'j.burchard@bluerank.com', 'raw_pass' => '1pRc5Lw', 'assigned_spot' => 107, 'is_admin' => 0],
+        ['name' => 'Karolina Pakulska', 'email' => 'k.pakulska@bluerank.com', 'raw_pass' => 'v6Fw9Nq', 'assigned_spot' => 103, 'is_admin' => 0],
+        ['name' => 'Magdalena Euejda', 'email' => 'm.euejda@bluerank.com', 'raw_pass' => '8tMz2Bc', 'assigned_spot' => 99, 'is_admin' => 0],
+        ['name' => 'Bartłomiej Majas', 'email' => 'b.majas@bluerank.com', 'raw_pass' => '4yLp8Xk', 'assigned_spot' => 100, 'is_admin' => 0]
     ];
 
     $stmt = $db->prepare("INSERT INTO users (name, email, password, assigned_spot, is_admin) VALUES (?, ?, ?, ?, ?)");
     foreach ($users as $u) {
-        $stmt->execute([$u['name'], $u['email'], $u['password'], $u['assigned_spot'], $u['is_admin']]);
+        $hash = password_hash($u['raw_pass'], PASSWORD_DEFAULT);
+        $stmt->execute([$u['name'], $u['email'], $hash, $u['assigned_spot'], $u['is_admin']]);
     }
 
-    echo "Inicjalizacja zakończona pomyślnie. Utworzono 5 miejsc i 6 użytkowników (w tym 1 admin).\n";
-    echo "Hasło dla wszystkich: password123\n";
+    echo "Inicjalizacja zakończona pomyślnie. Utworzono 20 miejsc i 20 użytkowników.\n";
 
 } catch (PDOException $e) {
     echo "Błąd inicjalizacji: " . $e->getMessage() . "\n";
