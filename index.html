@@ -29,8 +29,11 @@
                     <label for="password">Hasło</label>
                     <input type="password" id="password" required placeholder="••••••••">
                 </div>
-                <div style="text-align: right; margin-bottom: 20px;">
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Zapomniałeś hasła? Skontaktuj się z administratorem.</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                        <input type="checkbox" id="remember-me" checked> Zapamiętaj mnie
+                    </label>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Zapomniałeś hasła? Zgłoś adminowi.</span>
                 </div>
                 <div id="login-error" class="error-message"></div>
                 <button type="submit" class="btn btn-primary">Zaloguj się</button>
@@ -271,6 +274,6 @@
     <!-- Toast powiadomienia -->
     <div id="toast" class="toast"></div>
 
-    <script src="js/app.js?v=8"></script>
+    <script src="js/app.js?v=9"></script>
 </body>
 </html>

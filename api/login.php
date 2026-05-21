@@ -35,6 +35,7 @@ if ($attempts >= $MAX_ATTEMPTS) {
 $data = json_decode(file_get_contents('php://input'), true);
 $email = $data['email'] ?? '';
 $password = $data['password'] ?? '';
+$rememberMe = !empty($data['remember_me']);
 
 if (empty($email) || empty($password)) {
     jsonResponse(['error' => 'Email and password are required'], 400);
@@ -49,6 +50,22 @@ if ($user && password_verify($password, $user['password'])) {
     $db->prepare("DELETE FROM login_attempts WHERE ip = ?")->execute([$ip]);
     $_SESSION['user_id'] = $user['id'];
     session_regenerate_id(true); // Zabezpieczenie przed Session Fixation
+    
+    // Obsługa "Zapamiętaj mnie"
+    if ($rememberMe) {
+        $token = bin2hex(random_bytes(32));
+        $db->prepare("UPDATE users SET remember_token = ? WHERE id = ?")->execute([$token, $user['id']]);
+        
+        // Ciasteczko ważne 30 dni
+        setcookie('remember_token', $token, [
+            'expires' => time() + (30 * 24 * 60 * 60),
+            'path' => '/',
+            'httponly' => true,
+            'secure' => true,
+            'samesite' => 'Strict'
+        ]);
+    }
+    
     jsonResponse(['success' => true]);
 } else {
     // Niepowodzenie - dodaj wpis do licznika

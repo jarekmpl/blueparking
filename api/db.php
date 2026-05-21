@@ -18,11 +18,25 @@ try {
         )
     ");
     
-    // Automatyczne dodanie kolumny harmonogramu do istniejącej tabeli
+    // Automatyczne dodanie kolumny harmonogramu i tokenu do istniejącej tabeli
     try {
         $db->exec("ALTER TABLE users ADD COLUMN schedule_days TEXT DEFAULT '1,2,3,4,5'");
-    } catch (PDOException $e) {
-        // Ignoruj błąd jeśli kolumna już istnieje (kod 'HY000' lub message zawierający 'duplicate column')
+    } catch (PDOException $e) { }
+    
+    try {
+        $db->exec("ALTER TABLE users ADD COLUMN remember_token TEXT DEFAULT NULL");
+    } catch (PDOException $e) { }
+    
+    // Auto-login z ciasteczka "Zapamiętaj mnie"
+    if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
+        $token = $_COOKIE['remember_token'];
+        $stmt = $db->prepare("SELECT id FROM users WHERE remember_token = ?");
+        $stmt->execute([$token]);
+        $user = $stmt->fetch();
+        if ($user) {
+            $_SESSION['user_id'] = $user['id'];
+            session_regenerate_id(true);
+        }
     }
 } catch (PDOException $e) {
     echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);

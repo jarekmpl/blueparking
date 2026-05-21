@@ -88,13 +88,14 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const rememberMe = document.getElementById('remember-me').checked;
     const errorEl = document.getElementById('login-error');
     
     try {
         await fetchAPI('login.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password, remember_me: rememberMe })
         });
         errorEl.textContent = '';
         checkAuth();
