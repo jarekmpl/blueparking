@@ -32,6 +32,13 @@ if (!$user || !$user['assigned_spot']) {
 
 $spotNumber = $user['assigned_spot'];
 
+// Sprawdź, czy użytkownik ma już zarezerwowane inne miejsce z puli na ten dzień
+$stmt = $db->prepare("SELECT id FROM bookings WHERE user_id = ? AND date = ?");
+$stmt->execute([$userIdToCancel, $date]);
+if ($stmt->fetch()) {
+    jsonResponse(['error' => 'Masz już zarezerwowane inne miejsce na ten dzień. Najpierw anuluj tamtą rezerwację, aby odzyskać swoje.'], 400);
+}
+
 // Check if someone has already booked it
 $stmt = $db->prepare("SELECT id FROM bookings WHERE spot_number = ? AND date = ?");
 $stmt->execute([$spotNumber, $date]);
