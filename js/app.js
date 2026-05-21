@@ -267,7 +267,7 @@ window.releaseSpot = async (userId = null) => {
             body: JSON.stringify(payload)
         });
         showToast('Miejsce zwolnione');
-        loadSpots(currentDate);
+        loadSpots(currentDate, currentDayIndex);
     } catch (e) {
         showToast(e.message, 'error');
     }
@@ -285,7 +285,7 @@ window.cancelRelease = async (userId = null) => {
             body: JSON.stringify(payload)
         });
         showToast('Cofnięto zwolnienie');
-        loadSpots(currentDate);
+        loadSpots(currentDate, currentDayIndex);
     } catch (e) {
         showToast(e.message, 'error');
     }
@@ -299,7 +299,7 @@ window.bookSpot = async (spotNumber) => {
             body: JSON.stringify({ date: currentDate, spot_number: spotNumber })
         });
         showToast('Miejsce zarezerwowane!');
-        loadSpots(currentDate);
+        loadSpots(currentDate, currentDayIndex);
     } catch (e) {
         showToast(e.message, 'error');
     }
@@ -313,7 +313,7 @@ window.cancelBooking = async () => {
             body: JSON.stringify({ date: currentDate })
         });
         showToast('Rezerwacja anulowana');
-        loadSpots(currentDate);
+        loadSpots(currentDate, currentDayIndex);
     } catch (e) {
         showToast(e.message, 'error');
     }
