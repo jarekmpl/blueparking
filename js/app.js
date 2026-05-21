@@ -172,6 +172,15 @@ const renderSpots = (spots) => {
     const grid = document.getElementById('spots-grid');
     grid.innerHTML = '';
     
+    // Sprawdzamy, czy użytkownik "posiada" w tym dniu już jakiekolwiek miejsce
+    const hasSpotForToday = spots.some(spot => {
+        if (spot.booked_by_id === currentUser.id) return true;
+        if (spot.owner_id === currentUser.id) {
+            if (!spot.is_released && !spot.is_implicitly_released) return true;
+        }
+        return false;
+    });
+    
     spots.forEach(spot => {
         const isMyAssignedSpot = spot.owner_id === currentUser.id;
         const isBookedByMe = spot.booked_by_id === currentUser.id;
@@ -218,7 +227,11 @@ const renderSpots = (spots) => {
                 infoHtml = `<p>Właściciel: ${spot.owner_name || 'Brak (Wspólne)'}</p>`;
                 
                 if (currentDayIndex <= 5) {
-                    actionBtn = `<button class="btn btn-primary btn-sm" onclick="bookSpot(${spot.number})">Rezerwuj</button>`;
+                    if (hasSpotForToday) {
+                        actionBtn = `<button class="btn btn-outline btn-sm" disabled style="opacity: 0.5; cursor: not-allowed;" title="Masz już miejsce na ten dzień">Rezerwuj</button>`;
+                    } else {
+                        actionBtn = `<button class="btn btn-primary btn-sm" onclick="bookSpot(${spot.number})">Rezerwuj</button>`;
+                    }
                 } else {
                     actionBtn = `<span style="font-size: 0.8rem; color: var(--text-muted);">Poza limitem (max 5 dni przód)</span>`;
                 }
