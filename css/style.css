@@ -261,20 +261,55 @@ h2 {
 }
 
 /* Date tabs */
+.date-tabs-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.scroll-arrow {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: var(--transition);
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-size: 1.2rem;
+}
+
+.scroll-arrow:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.scroll-arrow.left {
+    margin-right: 12px;
+}
+
+.scroll-arrow.right {
+    margin-left: 12px;
+}
+
 .date-tabs {
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    padding-bottom: 8px;
+    padding-bottom: 4px;
+    scroll-behavior: smooth;
+    flex: 1;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .date-tabs::-webkit-scrollbar {
-    height: 6px;
-}
-
-.date-tabs::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
+    display: none;
 }
 
 .date-tab {

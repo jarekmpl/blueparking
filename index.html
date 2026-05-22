@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=12">
+    <link rel="stylesheet" href="css/style.css?v=13">
 </head>
 <body>
     <div class="background-elements">
@@ -72,8 +72,12 @@
             
             <section class="glass-card section-date-selector">
                 <h2>Wybierz datę</h2>
-                <div class="date-tabs" id="date-tabs">
-                    <!-- Daty zostaną wygenerowane przez JS -->
+                <div class="date-tabs-wrapper">
+                    <button type="button" class="scroll-arrow left" onclick="scrollDateTabs(-1)">&#8249;</button>
+                    <div class="date-tabs" id="date-tabs">
+                        <!-- Daty zostaną wygenerowane przez JS -->
+                    </div>
+                    <button type="button" class="scroll-arrow right" onclick="scrollDateTabs(1)">&#8250;</button>
                 </div>
             </section>
 
@@ -274,6 +278,6 @@
     <!-- Toast powiadomienia -->
     <div id="toast" class="toast"></div>
 
-    <script src="js/app.js?v=12"></script>
+    <script src="js/app.js?v=13"></script>
 </body>
 </html>

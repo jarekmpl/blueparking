@@ -116,6 +116,14 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
     }
 });
 
+// Scroll Date Tabs
+window.scrollDateTabs = (direction) => {
+    const container = document.getElementById('date-tabs');
+    // Scroll by roughly 2.5 tabs (assuming ~120px per tab with gap)
+    const scrollAmount = 300 * direction;
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+};
+
 // Dashboard Init
 let workingDaysList = []; // store for index checking
 
