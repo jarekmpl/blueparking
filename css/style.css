@@ -552,6 +552,11 @@ h2 {
         gap: 16px;
     }
     
+    .user-info {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
     .spots-header {
         flex-direction: column;
         align-items: flex-start;
