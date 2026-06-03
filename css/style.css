@@ -626,7 +626,7 @@ h2 {
         display: flex;
     }
     
-    .user-info {
+    #main-user-info {
         position: fixed;
         top: 0;
         left: 0;
@@ -647,12 +647,12 @@ h2 {
         margin: 0;
     }
 
-    .user-info.active {
+    #main-user-info.active {
         opacity: 1;
         pointer-events: auto;
     }
 
-    .user-info .btn {
+    #main-user-info .btn {
         width: 100%;
         max-width: 300px;
         padding: 16px;
