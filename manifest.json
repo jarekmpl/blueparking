@@ -1,0 +1,16 @@
+{
+  "name": "Blueparking",
+  "short_name": "Blueparking",
+  "description": "System rezerwacji miejsc parkingowych Bluerank.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#0070f3",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}
