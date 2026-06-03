@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=15">
+    <link rel="stylesheet" href="css/style.css?v=17">
 </head>
 <body>
     <div class="background-elements">
@@ -56,7 +56,12 @@
         <header class="glass-header">
             <div class="header-content">
                 <h1 class="logo">Blue<span>parking</span></h1>
-                <div class="user-info">
+                <button class="hamburger-btn" id="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+                <div class="user-info" id="main-user-info">
                     <span id="user-greeting">Witaj, <strong id="user-name"></strong></span>
                     <button id="admin-panel-btn" class="btn btn-sm btn-outline" style="display: none;">Panel Admina</button>
                     <button id="schedule-btn" class="btn btn-sm btn-outline" style="display: none;" onclick="openScheduleModal()">Mój harmonogram</button>
@@ -288,6 +293,6 @@
     <!-- Toast powiadomienia -->
     <div id="toast" class="toast"></div>
 
-    <script src="js/app.js?v=15"></script>
+    <script src="js/app.js?v=17"></script>
 </body>
 </html>

@@ -8,6 +8,31 @@ const showView = (viewId) => {
     document.getElementById(viewId).classList.add('active');
 };
 
+window.toggleMobileMenu = () => {
+    const menu = document.getElementById('main-user-info');
+    const btn = document.getElementById('mobile-menu-btn');
+    if (menu && btn) {
+        menu.classList.toggle('active');
+        btn.classList.toggle('active');
+    }
+};
+
+window.closeMobileMenu = () => {
+    const menu = document.getElementById('main-user-info');
+    const btn = document.getElementById('mobile-menu-btn');
+    if (menu && btn) {
+        menu.classList.remove('active');
+        btn.classList.remove('active');
+    }
+};
+
+// Automatyczne zamykanie menu po kliknięciu jakiegokolwiek przycisku w nim
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#main-user-info .btn').forEach(btn => {
+        btn.addEventListener('click', window.closeMobileMenu);
+    });
+});
+
 const showToast = (message, type = 'success') => {
     const toast = document.getElementById('toast');
     toast.textContent = message;
