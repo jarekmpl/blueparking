@@ -61,8 +61,8 @@ if ($user && password_verify($password, $user['password'])) {
             'expires' => time() + (30 * 24 * 60 * 60),
             'path' => '/',
             'httponly' => true,
-            'secure' => true,
-            'samesite' => 'Strict'
+            'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+            'samesite' => 'Lax'
         ]);
     }
     

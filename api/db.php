@@ -1,4 +1,13 @@
 <?php
+$session_lifetime = 30 * 24 * 60 * 60; // 30 dni
+ini_set('session.gc_maxlifetime', $session_lifetime);
+session_set_cookie_params([
+    'lifetime' => $session_lifetime,
+    'path' => '/',
+    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 session_start();
 
 $dbFile = __DIR__ . '/.db_9xQ2LpZ7vM3n.sqlite';
@@ -35,7 +44,7 @@ try {
         $user = $stmt->fetch();
         if ($user) {
             $_SESSION['user_id'] = $user['id'];
-            session_regenerate_id(true);
+            // Usunięto session_regenerate_id(true), aby uniknąć problemów przy współbieżnych requestach
         }
     }
 } catch (PDOException $e) {

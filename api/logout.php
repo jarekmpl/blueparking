@@ -9,8 +9,8 @@ setcookie('remember_token', '', [
     'expires' => time() - 3600,
     'path' => '/',
     'httponly' => true,
-    'secure' => true,
-    'samesite' => 'Strict'
+    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+    'samesite' => 'Lax'
 ]);
 
 session_destroy();
