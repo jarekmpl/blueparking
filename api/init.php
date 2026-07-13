@@ -73,7 +73,7 @@ try {
         ['name' => 'Jarosław Miszczak', 'email' => 'j.miszczak@bluerank.com', 'raw_pass' => 'x9Jc5Rb', 'assigned_spot' => 106, 'is_admin' => 1],
         ['name' => 'Jacek Tkaczuk', 'email' => 'j.tkaczuk@bluerank.com', 'raw_pass' => '7mFa4Vw', 'assigned_spot' => 113, 'is_admin' => 0],
         ['name' => 'Tomasz Sąsiadek', 'email' => 't.sasiadek@bluerank.com', 'raw_pass' => 'k2Hz9Pc', 'assigned_spot' => 110, 'is_admin' => 0],
-        ['name' => 'Aleksandra Piechocka', 'email' => 'a.piechocka@bluerank.com', 'raw_pass' => '5bYv8Nd', 'assigned_spot' => 97, 'is_admin' => 0],
+        ['name' => 'Aleksandra Piechocka', 'email' => 'o.piechocka@bluerank.com', 'raw_pass' => '5bYv8Nd', 'assigned_spot' => 97, 'is_admin' => 0],
         ['name' => 'Maciej Antczak', 'email' => 'm.antczak@bluerank.com', 'raw_pass' => 't4Wq6Lm', 'assigned_spot' => 98, 'is_admin' => 0],
         ['name' => 'Katarzyna Szymańska', 'email' => 'k.szymanska@bluerank.com', 'raw_pass' => '2pRx7Js', 'assigned_spot' => 112, 'is_admin' => 0],
         ['name' => 'Rafał Trąbski', 'email' => 'r.trabski@bluerank.com', 'raw_pass' => 'v8Nd3Bw', 'assigned_spot' => 115, 'is_admin' => 0],
